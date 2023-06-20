@@ -18,6 +18,7 @@ import { testDerivableAtomSetters } from './mixins/setters.tests';
 import { testSwap } from './mixins/swap.tests';
 import { testTake } from './mixins/take.tests';
 import { isDerivableAtom, isSettableDerivable } from './typeguards';
+import assert = require('assert');
 
 export interface Factories {
     value<V>(value: V, final?: boolean): Derivable<V>;
@@ -388,8 +389,9 @@ export function testDerivable(factory: Factories | (<V>(atom: Atom<V>) => Deriva
 
             try {
                 await d$.toPromise();
-            } catch (e) {
+            } catch (e: unknown) {
                 expect(e).toBeInstanceOf(Error);
+                assert(e instanceof Error);
                 expect(e.message).toBe('with a message');
                 return;
             }
@@ -620,7 +622,8 @@ export function testDerivable(factory: Factories | (<V>(atom: Atom<V>) => Deriva
                 expect(() => d$.get()).toThrowError('the Error');
                 try {
                     d$.get();
-                } catch (e) {
+                } catch (e: unknown) {
+                    assert(e instanceof Error);
                     expect(e.stack).toContain(' created:\n');
                 }
             });

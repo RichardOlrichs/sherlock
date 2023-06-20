@@ -1,7 +1,7 @@
 import { Derivable, error } from '@skunkteam/sherlock';
 import { fromEventPattern } from './from-event-pattern';
 
-export function fromObservable<V>(observable: Subscribable<V>): Derivable<V> {
+export function fromObservable<V>(observable: Subscribable<V> | ObservableCompatability<V>): Derivable<V> {
     return fromEventPattern(value$ => {
         const subscription = observable.subscribe({
             next: value => value$.set(value),
@@ -14,6 +14,10 @@ export function fromObservable<V>(observable: Subscribable<V>): Derivable<V> {
 
 /* RXJS INTERFACES */
 interface Subscribable<T> {
+    subscribe(observer: Partial<Observer<T>>): Unsubscribable;
+}
+
+interface ObservableCompatability<T> {
     subscribe(observer?: Partial<Observer<T>>): Unsubscribable;
     subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Unsubscribable;
 }

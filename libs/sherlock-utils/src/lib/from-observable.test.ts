@@ -1,5 +1,6 @@
 import { atom } from '@skunkteam/sherlock';
 import { fromObservable } from './from-observable';
+import assert = require('assert');
 
 describe('sherlock-utils/fromObservable', () => {
     // PREVENT RXJS FROM SHOWING UP IN PACKAGE.JSON:
@@ -297,7 +298,8 @@ describe('sherlock-utils/fromObservable', () => {
         try {
             await d$.toPromise();
             throw new Error('should have thrown an error');
-        } catch (e) {
+        } catch (e: unknown) {
+            assert(e instanceof Error);
             expect(e.message).toBe('my error');
         }
     });
